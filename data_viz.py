@@ -7,11 +7,11 @@ import xgboost
 
 # 1. ตั้งค่า Model และ Data
 st.set_page_config(page_title="Bank Deposit Prediction", layout="wide")
-st.title("🏦 Bank Deposit Prediction App (One-Hot Support)")
+st.title("Bank Deposit Prediction App (One-Hot Support)")
 
 @st.cache_resource
 def load_model():
-    #path
+
     path = r'.\Models\model_without_feature_en.pkl'
     if not os.path.exists(path):
         return None
@@ -19,7 +19,7 @@ def load_model():
         model = pickle.load(file)
     return model
 
-# โหลด Model
+
 model = load_model()
 
 if model is None:
@@ -44,16 +44,16 @@ MODEL_COLUMNS = [
 ]
 
 
-st.sidebar.header("📝 กรอกข้อมูลลูกค้า")
+st.sidebar.header("Fill in customer information.")
 
-# --- ข้อมูลตัวเลข (Numeric) ---
+
 age = st.sidebar.number_input("Age", min_value=18, max_value=100, value=30)
 balance = st.sidebar.number_input("Balance", value=0)
 campaign = st.sidebar.number_input("Campaign (จำนวนครั้งที่ติดต่อ)", min_value=1, value=1)
 pdays = st.sidebar.number_input("Pdays (วันหลังติดต่อครั้งก่อน)", value=-1)
 previous = st.sidebar.number_input("Previous (จำนวนครั้งที่เคยติดต่อ)", value=0)
 
-# --- ข้อมูลตัวเลือก (Categorical) ---
+
 job = st.sidebar.selectbox("Job", [
     'admin.', 'blue-collar', 'entrepreneur', 'housemaid', 'management', 'retired',
     'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown'
@@ -71,8 +71,8 @@ month = st.sidebar.selectbox("Month", [
 poutcome = st.sidebar.selectbox("Poutcome", ['unknown', 'failure', 'other', 'success'])
 
 
-# 4. Preprocessing
-if st.button("ทำนายผล"):
+
+if st.button("Predict"):
     
     input_data = {col: 0 for col in MODEL_COLUMNS}
     
@@ -109,7 +109,7 @@ if st.button("ทำนายผล"):
     set_one_hot('categorical__poutcome', poutcome)
 
 
-    # 5. ส่งเข้า Model
+ 
     input_df = pd.DataFrame([input_data])
     
     
@@ -130,11 +130,11 @@ if st.button("ทำนายผล"):
         
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("ผลลัพธ์การทำนาย:")
+            st.subheader("Result:")
             if result == 1:
-                st.success("ลูกค้าจะฝากเงิน (YES)")
+                st.success("Yes")
             else:
-                st.error("ลูกค้าจะไม่ฝากเงิน (NO)")
+                st.error("No")
                 
         with col2:
             st.metric("Confidence", f"{confidence:.2f}%")
@@ -143,13 +143,13 @@ if st.button("ทำนายผล"):
             st.dataframe(input_df)
 
     except Exception as e:
-        st.error(f"เกิดข้อผิดพลาด: {e}")
+        st.error(f"Error {e}")
         if hasattr(model, 'n_features_in_'):
-             st.warning(f"Model ต้องการ {model.n_features_in_} ช่อง แต่เราส่งไป {input_df.shape[1]} ช่อง")
+             st.warning(f"Model need {model.n_features_in_} but we {input_df.shape[1]} features.")
 
 
 st.divider()
-st.header(" Model Insights: ปัจจัยที่มีผลต่อการทำนาย")
+st.header(" Model Insights")
 
 
 try:
@@ -168,7 +168,7 @@ try:
     
     
     st.bar_chart(feat_df.set_index('Feature'))
-    st.caption("กราฟแสดง 10 ปัจจัยที่มีอิทธิพลสูงสุดต่อการตัดสินใจของ Model")
+    st.caption("Graph showing the top 10 factors that most influence the model's decision.")
 
 except Exception as e:
-    st.error(f"ไม่สามารถพลอตกราฟได้: {e}")
+    st.error(f"Can not plot graph: {e}")
