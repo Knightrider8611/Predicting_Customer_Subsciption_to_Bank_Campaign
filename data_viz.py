@@ -23,7 +23,7 @@ def load_model():
 model = load_model()
 
 if model is None:
-    st.error("❌ ไม่พบไฟล์ Model กรุณาเช็ค Path ในโค้ด")
+    st.error("ไม่พบไฟล์ Model กรุณาเช็ค Path ในโค้ด")
     st.stop()
 
 
@@ -72,7 +72,7 @@ poutcome = st.sidebar.selectbox("Poutcome", ['unknown', 'failure', 'other', 'suc
 
 
 # 4. Preprocessing
-if st.button("🚀 ทำนายผล"):
+if st.button("ทำนายผล"):
     
     input_data = {col: 0 for col in MODEL_COLUMNS}
     
@@ -132,9 +132,9 @@ if st.button("🚀 ทำนายผล"):
         with col1:
             st.subheader("ผลลัพธ์การทำนาย:")
             if result == 1:
-                st.success("✅ ลูกค้าจะฝากเงิน (YES)")
+                st.success("ลูกค้าจะฝากเงิน (YES)")
             else:
-                st.error("❌ ลูกค้าจะไม่ฝากเงิน (NO)")
+                st.error("ลูกค้าจะไม่ฝากเงิน (NO)")
                 
         with col2:
             st.metric("Confidence", f"{confidence:.2f}%")
@@ -172,6 +172,3 @@ try:
 
 except Exception as e:
     st.error(f"ไม่สามารถพลอตกราฟได้: {e}")
-
-
-
